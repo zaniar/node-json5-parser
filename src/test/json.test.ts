@@ -130,7 +130,7 @@ function assertMatchesLocation(input: string, matchingSegments: Segment[], expec
 	assert.equal(actual.matches(matchingSegments), expectedResult);
 }
 
-suite('JSON', () => {
+suite('JSON5', () => {
 	test('tokens', () => {
 		assertKinds('{', SyntaxKind.OpenBraceToken);
 		assertKinds('}', SyntaxKind.CloseBraceToken);

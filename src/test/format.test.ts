@@ -8,7 +8,7 @@ import * as assert from 'assert';
 import * as Formatter from '../impl/format';
 import { Range } from '../main';
 
-suite('JSON - formatter', () => {
+suite('JSON5 - formatter', () => {
 
 	function format(content: string, expected: string, insertSpaces = true) {
 		let range: Range | undefined = void 0;

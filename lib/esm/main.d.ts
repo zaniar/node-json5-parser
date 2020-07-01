@@ -1,5 +1,5 @@
 /**
- * Creates a JSON scanner on the given text.
+ * Creates a JSON5 scanner on the given text.
  * If ignoreTrivia is set, whitespaces or comments are ignored.
  */
 export declare const createScanner: (text: string, ignoreTrivia?: boolean) => JSON5Scanner;
@@ -32,7 +32,7 @@ export declare const enum SyntaxKind {
     EOF = 17
 }
 /**
- * The scanner object, representing a JSON scanner at a position in the input string.
+ * The scanner object, representing a JSON5 scanner at a position in the input string.
  */
 export interface JSON5Scanner {
     /**
@@ -77,20 +77,20 @@ export interface JSON5Scanner {
     getTokenError(): ScanError;
 }
 /**
- * For a given offset, evaluate the location in the JSON document. Each segment in the location path is either a property name or an array index.
+ * For a given offset, evaluate the location in the JSON5 document. Each segment in the location path is either a property name or an array index.
  */
 export declare const getLocation: (text: string, position: number) => Location;
 /**
- * Parses the given text and returns the object the JSON content represents. On invalid input, the parser tries to be as fault tolerant as possible, but still return a result.
+ * Parses the given text and returns the object the JSON5 content represents. On invalid input, the parser tries to be as fault tolerant as possible, but still return a result.
  * Therefore, always check the errors list to find out if the input was valid.
  */
 export declare const parse: (text: string, errors?: ParseError[], options?: ParseOptions) => any;
 /**
- * Parses the given text and returns a tree representation the JSON content. On invalid input, the parser tries to be as fault tolerant as possible, but still return a result.
+ * Parses the given text and returns a tree representation the JSON5 content. On invalid input, the parser tries to be as fault tolerant as possible, but still return a result.
  */
 export declare const parseTree: (text: string, errors?: ParseError[], options?: ParseOptions) => Node;
 /**
- * Finds the node at the given path in a JSON DOM.
+ * Finds the node at the given path in a JSON5 DOM.
  */
 export declare const findNodeAtLocation: (root: Node, path: JSON5Path) => Node | undefined;
 /**
@@ -98,11 +98,11 @@ export declare const findNodeAtLocation: (root: Node, path: JSON5Path) => Node |
  */
 export declare const findNodeAtOffset: (root: Node, offset: number, includeRightBound?: boolean) => Node | undefined;
 /**
- * Gets the JSON path of the given JSON DOM node
+ * Gets the JSON5 path of the given JSON5 DOM node
  */
 export declare const getNodePath: (node: Node) => JSON5Path;
 /**
- * Evaluates the JavaScript object of the given JSON DOM node
+ * Evaluates the JavaScript object of the given JSON5 DOM node
  */
 export declare const getNodeValue: (node: Node) => any;
 /**
@@ -110,7 +110,7 @@ export declare const getNodeValue: (node: Node) => any;
  */
 export declare const visit: (text: string, visitor: JSON5Visitor, options?: ParseOptions) => any;
 /**
- * Takes JSON with JavaScript-style comments and remove
+ * Takes JSON5 with JavaScript-style comments and remove
  * them. Optionally replaces every none-newline character
  * of comments with a replaceCharacter
  */
@@ -157,7 +157,7 @@ export interface Location {
      */
     previousNode?: Node;
     /**
-     * The path describing the location in the JSON document. The path consists of a sequence of strings
+     * The path describing the location in the JSON5 document. The path consists of a sequence of strings
      * representing an object property or numbers for array indices.
      */
     path: JSON5Path;
@@ -265,7 +265,7 @@ export interface FormattingOptions {
     inPlace?: boolean;
 }
 /**
- * Computes the edits needed to format a JSON document.
+ * Computes the edits needed to format a JSON5 document.
  *
  * @param documentText The input text
  * @param range The range to format or `undefined` to format the full content
@@ -296,7 +296,7 @@ export interface ModificationOptions {
     getInsertionIndex?: (properties: string[]) => number;
 }
 /**
- * Computes the edits needed to modify a value in the JSON document.
+ * Computes the edits needed to modify a value in the JSON5 document.
  *
  * @param documentText The input text
  * @param path The path of the value to change. The path represents either to the document root, a property or an array item.

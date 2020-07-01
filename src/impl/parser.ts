@@ -37,7 +37,7 @@ interface NodeImpl extends Node {
 }
 
 /**
- * For a given offset, evaluate the location in the JSON document. Each segment in the location path is either a property name or an array index.
+ * For a given offset, evaluate the location in the JSON5 document. Each segment in the location path is either a property name or an array index.
  */
 export function getLocation(text: string, position: number): Location {
 	const segments: Segment[] = []; // strings or numbers
@@ -157,7 +157,7 @@ export function getLocation(text: string, position: number): Location {
 
 
 /**
- * Parses the given text and returns the object the JSON content represents. On invalid input, the parser tries to be as fault tolerant as possible, but still return a result.
+ * Parses the given text and returns the object the JSON5 content represents. On invalid input, the parser tries to be as fault tolerant as possible, but still return a result.
  * Therefore always check the errors list to find out if the input was valid.
  */
 export function parse(text: string, errors: ParseError[] = [], options: ParseOptions = ParseOptions.DEFAULT): any {
@@ -208,7 +208,7 @@ export function parse(text: string, errors: ParseError[] = [], options: ParseOpt
 
 
 /**
- * Parses the given text and returns a tree representation the JSON content. On invalid input, the parser tries to be as fault tolerant as possible, but still return a result.
+ * Parses the given text and returns a tree representation the JSON5 content. On invalid input, the parser tries to be as fault tolerant as possible, but still return a result.
  */
 export function parseTree(text: string, errors: ParseError[] = [], options: ParseOptions = ParseOptions.DEFAULT): Node {
 	let currentParent: NodeImpl = { type: 'array', offset: -1, length: -1, children: [], parent: undefined }; // artificial root
@@ -275,7 +275,7 @@ export function parseTree(text: string, errors: ParseError[] = [], options: Pars
 }
 
 /**
- * Finds the node at the given path in a JSON DOM.
+ * Finds the node at the given path in a JSON5 DOM.
  */
 export function findNodeAtLocation(root: Node, path: JSON5Path): Node | undefined {
 	if (!root) {
@@ -310,7 +310,7 @@ export function findNodeAtLocation(root: Node, path: JSON5Path): Node | undefine
 }
 
 /**
- * Gets the JSON path of the given JSON DOM node
+ * Gets the JSON5 path of the given JSON5 DOM node
  */
 export function getNodePath(node: Node): JSON5Path {
 	if (!node.parent || !node.parent.children) {
@@ -330,7 +330,7 @@ export function getNodePath(node: Node): JSON5Path {
 }
 
 /**
- * Evaluates the JavaScript object of the given JSON DOM node
+ * Evaluates the JavaScript object of the given JSON5 DOM node
  */
 export function getNodeValue(node: Node): any {
 	switch (node.type) {
@@ -626,7 +626,7 @@ export function visit(text: string, visitor: JSON5Visitor, options: ParseOptions
 }
 
 /**
- * Takes JSON with JavaScript-style comments and remove
+ * Takes JSON5 with JavaScript-style comments and remove
  * them. Optionally replaces every none-newline character
  * of comments with a replaceCharacter
  */

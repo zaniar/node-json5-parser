@@ -8,7 +8,7 @@ import * as assert from 'assert';
 import { FormattingOptions, Edit } from '../main';
 import { setProperty, removeProperty } from '../impl/edit';
 
-suite('JSON - edits', () => {
+suite('JSON5 - edits', () => {
 
 	function assertEdit(content: string, edits: Edit[], expected: string) {
 		assert(edits);

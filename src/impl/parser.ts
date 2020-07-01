@@ -4,10 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
+import * as JSON5 from "json5";
 import { createScanner } from './scanner';
 import {
-	JSONPath,
-	JSONVisitor,
+	JSON5Path,
+	JSON5Visitor,
 	Location,
 	Node,
 	NodeType,
@@ -172,7 +173,7 @@ export function parse(text: string, errors: ParseError[] = [], options: ParseOpt
 		}
 	}
 
-	const visitor: JSONVisitor = {
+	const visitor: JSON5Visitor = {
 		onObjectBegin: () => {
 			const object = {};
 			onValue(object);
@@ -224,7 +225,7 @@ export function parseTree(text: string, errors: ParseError[] = [], options: Pars
 		return valueNode;
 	}
 
-	const visitor: JSONVisitor = {
+	const visitor: JSON5Visitor = {
 		onObjectBegin: (offset: number) => {
 			currentParent = onValue({ type: 'object', offset, length: -1, parent: currentParent, children: [] });
 		},
@@ -276,7 +277,7 @@ export function parseTree(text: string, errors: ParseError[] = [], options: Pars
 /**
  * Finds the node at the given path in a JSON DOM.
  */
-export function findNodeAtLocation(root: Node, path: JSONPath): Node | undefined {
+export function findNodeAtLocation(root: Node, path: JSON5Path): Node | undefined {
 	if (!root) {
 		return undefined;
 	}
@@ -311,7 +312,7 @@ export function findNodeAtLocation(root: Node, path: JSONPath): Node | undefined
 /**
  * Gets the JSON path of the given JSON DOM node
  */
-export function getNodePath(node: Node): JSONPath {
+export function getNodePath(node: Node): JSON5Path {
 	if (!node.parent || !node.parent.children) {
 		return [];
 	}
@@ -383,7 +384,7 @@ export function findNodeAtOffset(node: Node, offset: number, includeRightBound =
 /**
  * Parses the given text and invokes the visitor functions for each object, array and literal reached.
  */
-export function visit(text: string, visitor: JSONVisitor, options: ParseOptions = ParseOptions.DEFAULT): any {
+export function visit(text: string, visitor: JSON5Visitor, options: ParseOptions = ParseOptions.DEFAULT): any {
 
 	const _scanner = createScanner(text, false);
 
@@ -484,7 +485,7 @@ export function visit(text: string, visitor: JSONVisitor, options: ParseOptions 
 			case SyntaxKind.NumericLiteral:
 				let value = 0;
 				try {
-					value = JSON.parse(_scanner.getTokenValue());
+					value = JSON5.parse(_scanner.getTokenValue());
 					if (typeof value !== 'number') {
 						handleError(ParseErrorCode.InvalidNumberFormat);
 						value = 0;

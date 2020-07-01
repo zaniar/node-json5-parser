@@ -13,7 +13,7 @@ import * as parser from './impl/parser';
  * Creates a JSON scanner on the given text.
  * If ignoreTrivia is set, whitespaces or comments are ignored.
  */
-export const createScanner: (text: string, ignoreTrivia?: boolean) => JSONScanner = scanner.createScanner;
+export const createScanner: (text: string, ignoreTrivia?: boolean) => JSON5Scanner = scanner.createScanner;
 
 export const enum ScanError {
 	None = 0,
@@ -48,7 +48,7 @@ export const enum SyntaxKind {
 /**
  * The scanner object, representing a JSON scanner at a position in the input string.
  */
-export interface JSONScanner {
+export interface JSON5Scanner {
 	/**
 	 * Sets the scan position to a new offset. A call to 'scan' is needed to get the first token.
 	 */
@@ -111,7 +111,7 @@ export const parseTree: (text: string, errors?: ParseError[], options?: ParseOpt
 /**
  * Finds the node at the given path in a JSON DOM.
  */
-export const findNodeAtLocation: (root: Node, path: JSONPath) => Node | undefined = parser.findNodeAtLocation;
+export const findNodeAtLocation: (root: Node, path: JSON5Path) => Node | undefined = parser.findNodeAtLocation;
 
 /**
  * Finds the innermost node at the given offset. If includeRightBound is set, also finds nodes that end at the given offset.
@@ -121,7 +121,7 @@ export const findNodeAtOffset: (root: Node, offset: number, includeRightBound?: 
 /**
  * Gets the JSON path of the given JSON DOM node
  */
-export const getNodePath: (node: Node) => JSONPath = parser.getNodePath;
+export const getNodePath: (node: Node) => JSON5Path = parser.getNodePath;
 
 /**
  * Evaluates the JavaScript object of the given JSON DOM node 
@@ -131,7 +131,7 @@ export const getNodeValue: (node: Node) => any = parser.getNodeValue;
 /**
  * Parses the given text and invokes the visitor functions for each object, array and literal reached.
  */
-export const visit: (text: string, visitor: JSONVisitor, options?: ParseOptions) => any = parser.visit;
+export const visit: (text: string, visitor: JSON5Visitor, options?: ParseOptions) => any = parser.visit;
 
 /**
  * Takes JSON with JavaScript-style comments and remove
@@ -200,7 +200,7 @@ export interface Node {
 }
 
 export type Segment = string | number;
-export type JSONPath = Segment[];
+export type JSON5Path = Segment[];
 
 export interface Location {
 	/**
@@ -211,13 +211,13 @@ export interface Location {
 	 * The path describing the location in the JSON document. The path consists of a sequence of strings
 	 * representing an object property or numbers for array indices.
 	 */
-	path: JSONPath;
+	path: JSON5Path;
 	/**
 	 * Matches the locations path against a pattern consisting of strings (for properties) and numbers (for array indices).
 	 * '*' will match a single segment of any property name or index.
 	 * '**' will match a sequence of segments of any property name or index, or no segment.
 	 */
-	matches: (patterns: JSONPath) => boolean;
+	matches: (patterns: JSON5Path) => boolean;
 	/**
 	 * If set, the location's offset is at a property key.
 	 */
@@ -230,7 +230,7 @@ export interface ParseOptions {
 	allowEmptyContent?: boolean;
 }
 
-export interface JSONVisitor {
+export interface JSON5Visitor {
 	/**
 	 * Invoked when an open brace is encountered and an object is started. The offset and length represent the location of the open brace.
 	 */
@@ -354,7 +354,7 @@ export interface ModificationOptions {
 	*/
 	formattingOptions: FormattingOptions;
 	/**
-	 * Default false. If `JSONPath` refers to an index of an array and {@property isArrayInsertion} is `true`, then
+	 * Default false. If `JSON5Path` refers to an index of an array and {@property isArrayInsertion} is `true`, then
 	 * {@function modify} will insert a new item at that location instead of overwriting its contents.
 	 */
 	isArrayInsertion?: boolean;
@@ -379,7 +379,7 @@ export interface ModificationOptions {
  * the same offset, for example multiple inserts, or an insert followed by a remove or replace. The order in the array defines which edit is applied first.
  * To apply edits to an input, you can use `applyEdits`.
  */
-export function modify(text: string, path: JSONPath, value: any, options: ModificationOptions): Edit[] {
+export function modify(text: string, path: JSON5Path, value: any, options: ModificationOptions): Edit[] {
 	return edit.setProperty(text, path, value, options.formattingOptions, options.getInsertionIndex, options.isArrayInsertion);
 }
 

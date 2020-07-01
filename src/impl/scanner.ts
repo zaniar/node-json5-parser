@@ -4,13 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import { ScanError, SyntaxKind, JSONScanner } from '../main';
+import { ScanError, SyntaxKind, JSON5Scanner } from '../main';
+import { threadId } from 'worker_threads';
 
 /**
  * Creates a JSON scanner on the given text.
  * If ignoreTrivia is set, whitespaces or comments are ignored.
  */
-export function createScanner(text: string, ignoreTrivia: boolean = false): JSONScanner {
+export function createScanner(text: string, ignoreTrivia: boolean = false): JSON5Scanner {
 
 	const len = text.length;
 	let pos = 0,
@@ -67,16 +68,29 @@ export function createScanner(text: string, ignoreTrivia: boolean = false): JSON
 				pos++;
 			}
 		}
-		if (pos < text.length && text.charCodeAt(pos) === CharacterCodes.dot) {
-			pos++;
-			if (pos < text.length && isDigit(text.charCodeAt(pos))) {
+		if (pos < text.length) {
+			if (text.charCodeAt(pos) === CharacterCodes.dot) {
 				pos++;
-				while (pos < text.length && isDigit(text.charCodeAt(pos))) {
+				if (pos < text.length && isDigit(text.charCodeAt(pos))) {
 					pos++;
+					while (pos < text.length && isDigit(text.charCodeAt(pos))) {
+						pos++;
+					}
+				} else {
+					scanError = ScanError.UnexpectedEndOfNumber;
+					return text.substring(start, pos);
 				}
-			} else {
-				scanError = ScanError.UnexpectedEndOfNumber;
-				return text.substring(start, pos);
+			} else if (text.charCodeAt(pos) === CharacterCodes.x) {
+				pos++;
+				if (pos < text.length && isHexDigit(text.charCodeAt(pos))) {
+					pos++;
+					while (pos < text.length && isHexDigit(text.charCodeAt(pos))) {
+						pos++;
+					}
+				} else {
+					scanError = ScanError.UnexpectedEndOfNumber;
+					return text.substring(start, pos);
+				}
 			}
 		}
 		let end = pos;
@@ -288,7 +302,7 @@ export function createScanner(text: string, ignoreTrivia: boolean = false): JSON
 							tokenLineStartOffset = pos;
 						}
 					}
-					
+
 					if (!commentClosed) {
 						pos++;
 						scanError = ScanError.UnexpectedEndOfComment;
@@ -306,12 +320,13 @@ export function createScanner(text: string, ignoreTrivia: boolean = false): JSON
 			case CharacterCodes.minus:
 				value += String.fromCharCode(code);
 				pos++;
-				if (pos === len || !isDigit(text.charCodeAt(pos))) {
+				if (pos === len || !(text.charCodeAt(pos) === CharacterCodes.dot || isDigit(text.charCodeAt(pos)))) {
 					return token = SyntaxKind.Unknown;
 				}
 			// found a minus, followed by a number so
 			// we fall through to proceed with scanning
 			// numbers
+			case CharacterCodes.dot:
 			case CharacterCodes._0:
 			case CharacterCodes._1:
 			case CharacterCodes._2:
@@ -401,6 +416,10 @@ function isLineBreak(ch: number): boolean {
 
 function isDigit(ch: number): boolean {
 	return ch >= CharacterCodes._0 && ch <= CharacterCodes._9;
+}
+
+function isHexDigit(ch: number): boolean {
+	return (ch >= CharacterCodes._0 && ch <= CharacterCodes._9) || (ch >= CharacterCodes.a && ch <= CharacterCodes.f) || (ch >= CharacterCodes.A && ch <= CharacterCodes.F);
 }
 
 const enum CharacterCodes {

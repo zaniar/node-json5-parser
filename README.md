@@ -1,5 +1,5 @@
-# jsonc-parser
-Scanner and parser for JSON with comments.
+# json5-parser
+Scanner and parser for JSON5. Derived from [node-jsonc-parser](https://github.com/microsoft/node-jsonc-parser).
 
 [![npm Package](https://img.shields.io/npm/v/jsonc-parser.svg?style=flat-square)](https://www.npmjs.org/package/jsonc-parser)
 [![NPM Downloads](https://img.shields.io/npm/dm/jsonc-parser.svg)](https://npmjs.org/package/jsonc-parser)
@@ -21,7 +21,7 @@ JSONC is JSON with JavaScript style comments. This node module provides a scanne
 Installation
 ------------
 
-    npm install --save jsonc-parser
+    npm install --save zaniar/json5-parser
     
     
 API
@@ -39,7 +39,7 @@ export function createScanner(text:string, ignoreTrivia:boolean = false):JSONSca
 /**
  * The scanner object, representing a JSON scanner at a position in the input string.
  */
-export interface JSONScanner {
+export interface JSON5Scanner {
     /**
      * Sets the scan position to a new offset. A call to 'scan' is needed to get the first token.
      */
@@ -100,7 +100,7 @@ export declare function parse(text: string, errors?: {error: ParseErrorCode;}[],
  */
 export declare function visit(text: string, visitor: JSONVisitor, options?: ParseOptions): any;
 
-export interface JSONVisitor {
+export interface JSON5Visitor {
     /**
      * Invoked when an open brace is encountered and an object is started. The offset and length represent the location of the open brace.
      */
@@ -197,7 +197,7 @@ export interface Location {
 /**
  * Finds the node at the given path in a JSON DOM.
  */
-export function findNodeAtLocation(root: Node, path: JSONPath): Node | undefined;
+export function findNodeAtLocation(root: Node, path: JSON5Path): Node | undefined;
 
 /**
  * Finds the most inner node at the given offset. If includeRightBound is set, also finds nodes that end at the given offset.
@@ -244,7 +244,7 @@ export function format(documentText: string, range: Range, options: FormattingOp
  * the same offset, for example multiple inserts, or an insert followed by a remove or replace. The order in the array defines which edit is applied first.
  * To apply edits to an input, you can use `applyEdits`
  */
-export function modify(text: string, path: JSONPath, value: any, options: ModificationOptions): Edit[];
+export function modify(text: string, path: JSON5Path, value: any, options: ModificationOptions): Edit[];
 
 /**
  * Applies edits to a input string.

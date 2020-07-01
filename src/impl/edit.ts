@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import { Edit, FormattingOptions, ParseError, Node, JSONPath, Segment } from '../main';
+import { Edit, FormattingOptions, ParseError, Node, JSON5Path, Segment } from '../main';
 import { format, isEOL } from './format';
 import { parseTree, findNodeAtLocation } from './parser';
 
-export function removeProperty(text: string, path: JSONPath, formattingOptions: FormattingOptions): Edit[] {
+export function removeProperty(text: string, path: JSON5Path, formattingOptions: FormattingOptions): Edit[] {
 	return setProperty(text, path, void 0, formattingOptions);
 }
 
-export function setProperty(text: string, originalPath: JSONPath, value: any, formattingOptions: FormattingOptions, getInsertionIndex?: (properties: string[]) => number, isArrayInsertion: boolean = false): Edit[] {
+export function setProperty(text: string, originalPath: JSON5Path, value: any, formattingOptions: FormattingOptions, getInsertionIndex?: (properties: string[]) => number, isArrayInsertion: boolean = false): Edit[] {
 	let path = originalPath.slice()
 	let errors: ParseError[] = [];
 	let root = parseTree(text, errors);

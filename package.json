@@ -1,26 +1,27 @@
 {
-  "name": "jsonc-parser",
+  "name": "json5-parser",
   "version": "2.2.1",
   "description": "Scanner and parser for JSON with comments.",
   "main": "./lib/umd/main.js",
   "typings": "./lib/umd/main",
   "module": "./lib/esm/main.js",
-  "author": "Microsoft Corporation",
+  "author": "zaniar",
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/node-jsonc-parser"
+    "url": "https://github.com/zaniar/node-json5-parser"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/microsoft/node-jsonc-parser/issues"
+    "url": "https://github.com/zaniar/node-json5-parser/issues"
   },
   "devDependencies": {
-    "mocha": "^6.2.2",
-    "typescript": "^3.6.4",
-    "@types/node": "^10.12.12",
+    "@types/json5": "^0.0.30",
     "@types/mocha": "^5.2.7",
+    "@types/node": "^10.12.12",
+    "mocha": "^6.2.2",
+    "rimraf": "^3.0.0",
     "tslint": "^5.20.0",
-    "rimraf": "^3.0.0"
+    "typescript": "^3.6.4"
   },
   "scripts": {
     "prepublishOnly": "npm run clean && npm run compile-esm && npm run test && npm run remove-sourcemap-refs",
@@ -33,5 +34,8 @@
     "test": "npm run compile && mocha",
     "preversion": "npm test",
     "postversion": "git push && git push --tags"
+  },
+  "dependencies": {
+    "json5": "^2.1.3"
   }
 }

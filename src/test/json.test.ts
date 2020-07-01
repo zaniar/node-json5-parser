@@ -4,10 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
+import * as JSON5 from "json5";
 import * as assert from 'assert';
 import {
 	SyntaxKind, createScanner, parse, getLocation, Node, ParseError, parseTree, ParseErrorCode,
-	ParseOptions, Segment, findNodeAtLocation, getNodeValue, getNodePath, ScanError, Location, visit, JSONVisitor
+	ParseOptions, Segment, findNodeAtLocation, getNodeValue, getNodePath, ScanError, Location, visit, JSON5Visitor
 } from '../main';
 import { truncateSync } from 'fs';
 
@@ -64,11 +65,11 @@ function assertTree(input: string, expected: any, expectedErrors: ParseError[] =
 	};
 	checkParent(actual);
 
-	assert.deepEqual(actual, expected, JSON.stringify(actual));
+	assert.deepEqual(actual, expected, JSON5.stringify(actual));
 }
 
 interface VisitorCallback {
-	id: keyof JSONVisitor,
+	id: keyof JSON5Visitor,
 	text: string;
 	startLine: number;
 	startCharacter: number;
@@ -82,8 +83,8 @@ interface VisitorError extends ParseError {
 function assertVisit(input: string, expected: VisitorCallback[], expectedErrors: VisitorError[] = [], disallowComments = false): void {
 	let errors: VisitorError[] = [];
 	let actuals: VisitorCallback[] = [];
-	let noArgHalder = (id: keyof JSONVisitor) => (offset: number, length: number, startLine: number, startCharacter: number) => actuals.push({ id, text: input.substr(offset, length), startLine, startCharacter });
-	let oneArgHalder = (id: keyof JSONVisitor) => (arg: any, offset: number, length: number, startLine: number, startCharacter: number) => actuals.push({ id, text: input.substr(offset, length), startLine, startCharacter, arg });
+	let noArgHalder = (id: keyof JSON5Visitor) => (offset: number, length: number, startLine: number, startCharacter: number) => actuals.push({ id, text: input.substr(offset, length), startLine, startCharacter });
+	let oneArgHalder = (id: keyof JSON5Visitor) => (arg: any, offset: number, length: number, startLine: number, startCharacter: number) => actuals.push({ id, text: input.substr(offset, length), startLine, startCharacter, arg });
 	visit(input, {
 		onObjectBegin: noArgHalder('onObjectBegin'),
 		onObjectProperty: oneArgHalder('onObjectProperty'),
@@ -100,7 +101,7 @@ function assertVisit(input: string, expected: VisitorCallback[], expectedErrors:
 		disallowComments
 	});
 	assert.deepEqual(errors, expectedErrors);
-	assert.deepEqual(actuals, expected, JSON.stringify(actuals));
+	assert.deepEqual(actuals, expected, JSON5.stringify(actuals));
 }
 
 function assertNodeAtLocation(input: Node, segments: Segment[], expected: any) {
@@ -192,6 +193,9 @@ suite('JSON', () => {
 		assertKinds('90E-123', SyntaxKind.NumericLiteral);
 		assertKinds('90E123', SyntaxKind.NumericLiteral);
 		assertKinds('90e123', SyntaxKind.NumericLiteral);
+		assertKinds('.0', SyntaxKind.NumericLiteral);
+		assertKinds('-.5', SyntaxKind.NumericLiteral);
+		assertKinds('0xff', SyntaxKind.NumericLiteral);
 
 		// zero handling
 		assertKinds('01', SyntaxKind.NumericLiteral, SyntaxKind.NumericLiteral);
@@ -199,7 +203,7 @@ suite('JSON', () => {
 
 		// unexpected end
 		assertKinds('-', SyntaxKind.Unknown);
-		assertKinds('.0', SyntaxKind.Unknown);
+		// assertKinds('.0', SyntaxKind.Unknown);
 	});
 
 	test('keywords: true, false, null', () => {
